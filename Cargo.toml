@@ -1,5 +1,5 @@
 [package]
-name = "solarm-utils-rs"
+name = "solarm_utils"
 version = "0.1.0"
 edition = "2021"
 description = "A set of utility functions which may exist but just slightly in an odd form to be usable on illumos systems"
