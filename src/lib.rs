@@ -1,6 +1,5 @@
-use std::string::FromUtf8Error;
-
 use miette::Diagnostic;
+use std::string::FromUtf8Error;
 use thiserror::Error;
 
 type Result<T> = miette::Result<T, Error>;
@@ -14,7 +13,7 @@ pub enum Error {
     FromUtf8Error(#[from] FromUtf8Error),
 
     #[error(transparent)]
-    ZfsBuilderError(#[from] ZfsBuilderError),
+    ZfsBuilderError(#[from] zfs::ZfsBuilderError),
 
     #[error("zfs process failed: {0}")]
     ZFSError(String),
@@ -26,15 +25,14 @@ pub enum Error {
     InvalidZfsListType(String),
 }
 
-mod zfs;
-pub use crate::zfs::*;
+pub mod zfs;
 
 #[cfg(test)]
 mod tests {
 
     #[test]
     fn builder_works() -> miette::Result<()> {
-        let ds = crate::create(
+        let ds = crate::zfs::create(
             &crate::zfs::CreateRequestBuilder::default()
                 .name("testvol")
                 .add_property("blub", "test")
@@ -44,7 +42,7 @@ mod tests {
 
         assert_eq!("testvol", ds.name());
 
-        let ds = crate::create(
+        let ds = crate::zfs::create(
             &crate::zfs::CreateRequestBuilder::default()
                 .name("testds")
                 .build()?,
@@ -52,7 +50,7 @@ mod tests {
 
         assert_eq!("testds", ds.name());
 
-        let _list = crate::list(&crate::zfs::ListRequestBuilder::default().build()?)?;
+        let _list = crate::zfs::list(&crate::zfs::ListRequestBuilder::default().build()?)?;
 
         Ok(())
     }
